@@ -85,7 +85,7 @@
                       <dt
                         class="mb-1 text-gray-500 md:text-lg dark:text-gray-400"
                       >
-                        최근 매수
+                        최근 매수 거래
                       </dt>
                       <dd class="text-lg font-semibold">
                         주문 시간 : {{ stocks_info.buy_order_time }} 주문량 :
@@ -96,7 +96,7 @@
                     </div>
                     <div class="flex flex-col">
                       <dt class="text-gray-500 md:text-lg dark:text-gray-400">
-                        최근 매도
+                        최근 매도 거래
                       </dt>
                       <dd class="text-lg font-semibold">
                         주문 시간 : {{ stocks_info.sell_order_time }} 주문량 :
