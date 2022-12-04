@@ -331,7 +331,7 @@ export default {
           .get("http://127.0.0.1:3000/api/user/money/", {})
           .then((res) => {
             console.log(res.data);
-            this.user_hold_amount = res.data;
+            this.user_hold_amount = res.data["money"];
           })
           .catch((err) => {
             console.log(err);
@@ -647,7 +647,7 @@ export default {
       .get("http://127.0.0.1:3000/api/user/money/", {})
       .then((res) => {
         console.log(res.data);
-        this.user_hold_amount = res.data;
+        this.user_hold_amount = res.data["money"];
       })
       .catch((err) => {
         console.log(err);
