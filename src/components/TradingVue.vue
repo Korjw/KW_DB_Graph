@@ -74,28 +74,36 @@
                 </dl>
               </div>
               <!-- sidebar -->
-              <div class="gap-5 min-w-[50rem] max-h-[42rem]">
+              <div class="gap-5 min-w-[52rem] max-h-[42rem]">
                 <div
                   class="w-full p-4 bg-white border rounded-lg shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700"
                 >
                   <dl
-                    class="max-w-md text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700"
+                    class="text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700"
                   >
                     <div class="flex flex-col">
                       <dt
                         class="mb-1 text-gray-500 md:text-lg dark:text-gray-400"
                       >
-                        멀채울까요
+                        최근 매수
                       </dt>
-                      <dd class="text-lg font-semibold">멀채울까요</dd>
+                      <dd class="text-lg font-semibold">
+                        주문 시간 : {{ stocks_info.buy_order_time }} 주문량 :
+                        {{ stocks_info.buy_order_amount }} 주문 금액 :
+                        {{ stocks_info.buy_order_price }}
+                        {{ stocks_info.buy_confirmed }}
+                      </dd>
                     </div>
                     <div class="flex flex-col">
-                      <dt
-                        class="mb-1 text-gray-500 md:text-lg dark:text-gray-400"
-                      >
-                        멀채울까요
+                      <dt class="text-gray-500 md:text-lg dark:text-gray-400">
+                        최근 매도
                       </dt>
-                      <dd class="text-lg font-semibold">멀채울까요</dd>
+                      <dd class="text-lg font-semibold">
+                        주문 시간 : {{ stocks_info.sell_order_time }} 주문량 :
+                        {{ stocks_info.sell_order_amount }} 주문 금액 :
+                        {{ stocks_info.sell_order_price }}
+                        {{ stocks_info.sell_confirmed }}
+                      </dd>
                     </div>
                   </dl>
                 </div>
@@ -115,37 +123,38 @@
                   for="availability"
                   class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-400"
                 >
-                  주문가능
+                  주문가능 금액
                 </label>
                 <p class="font-normal text-xl text-gray-700 dark:text-gray-400">
-                  금액
+                  {{ user_hold_amount }}
                 </p>
               </div>
               <div class="my-3">
                 <label
-                  for="category"
+                  for="trade"
                   class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-400"
                 >
                   매수/매도
                 </label>
                 <select
-                  id="category"
-                  v-model="category"
+                  id="trade"
+                  v-model="trade"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
-                  <option value="buy">매도</option>
-                  <option value="sell">매수</option>
+                  <option value="sell">매도</option>
+                  <option value="but">매수</option>
                 </select>
               </div>
               <div class="my-3">
                 <label
-                  for="stock_orders"
+                  for="order_amount"
                   class="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
                   >수량(1 단위)</label
                 >
                 <input
                   type="number"
-                  id="stock_orders"
+                  v-model="order_amount"
+                  id="order_amount"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="0"
                   required
@@ -153,22 +162,35 @@
               </div>
               <div class="my-3">
                 <label
-                  for="availability"
-                  class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-400"
+                  for="order_price "
+                  class="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
+                  >주문가격</label
                 >
-                  총 주문 금액
-                </label>
-                <p class="font-normal text-xl text-gray-700 dark:text-gray-400">
-                  금액
-                </p>
+                <input
+                  type="number"
+                  v-model="order_price"
+                  id="order_price"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="0"
+                  required
+                />
               </div>
               <div class="flex flex-col">
                 <button
-                  type="submit"
-                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  v-on:click="order"
+                  class="text-white font-bold bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                   주문
                 </button>
+              </div>
+              <div class="flex flex-col">
+                <div class="my-3">
+                  <label
+                    for="order_price "
+                    class="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
+                    >{{ order_success }}</label
+                  >
+                </div>
               </div>
             </form>
           </div>
@@ -286,6 +308,62 @@ export default {
   name: "app",
   components: { TradingVue },
   methods: {
+    order() {
+      //console(this.trade, this.stock_code, this.order_amount, this.order_price);
+      if (this.order_amount * this.order_price > this.user_hold_amount) {
+        this.order_success = "주문실패";
+      } else {
+        this.order_success = "주문성공";
+        axios
+          .post("http://127.0.0.1:3000/api/stock/order/", {
+            trade: this.trade,
+            stock_code: this.stock_code,
+            order_amount: this.order_amount,
+            order_price: this.order_price,
+          })
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        axios
+          .get("http://127.0.0.1:3000/api/user/money/", {})
+          .then((res) => {
+            console.log(res.data);
+            this.user_hold_amount = res.data;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+        axios
+          .post("http://127.0.0.1:3000/api/trade/confirm/", {
+            stock_code: this.stock_code,
+          })
+          .then((res) => {
+            console.log(res.data);
+            res.data["sell_order_time"].replaceAll("T", " ");
+            res.data["sell_order_time"].replaceAll("Z", "");
+            res.data["buy_order_time"].replaceAll("T", " ");
+            res.data["buy_order_time"].replaceAll("Z", "");
+            if (res.data["buy_confirmed"] == 1) {
+              res.data["buy_confirmed"] = "체결";
+            } else {
+              res.data["buy_confirmed"] = "미체결";
+            }
+            if (res.data["sell_confirmed"] == 1) {
+              res.data["sell_confirmed"] = "체결";
+            } else {
+              res.data["sell_confirmed"] = "미체결";
+            }
+            this.stocks_info = res.data;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    },
     button_click() {
       this.count += 1;
       const types = ["RSI", "MOM", "BBW", "MFI"];
@@ -541,6 +619,7 @@ export default {
       .catch((err) => {
         console.log(err);
       });
+
     axios
       .post("http://127.0.0.1:3000/api/stock/price/", {
         stock_code: this.stock_code,
@@ -563,6 +642,43 @@ export default {
       .catch((err) => {
         console.log(err);
       });
+
+    axios
+      .get("http://127.0.0.1:3000/api/user/money/", {})
+      .then((res) => {
+        console.log(res.data);
+        this.user_hold_amount = res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axios
+      .post("http://127.0.0.1:3000/api/trade/confirm/", {
+        stock_code: this.stock_code,
+      })
+      .then((res) => {
+        console.log(res.data);
+        res.data["sell_order_time"].replaceAll("T", " ");
+        res.data["sell_order_time"].replaceAll("Z", "");
+        res.data["buy_order_time"].replaceAll("T", " ");
+        res.data["buy_order_time"].replaceAll("Z", "");
+        if (res.data["buy_confirmed"] == 1) {
+          res.data["buy_confirmed"] = "체결";
+        } else {
+          res.data["buy_confirmed"] = "미체결";
+        }
+        if (res.data["sell_confirmed"] == 1) {
+          res.data["sell_confirmed"] = "체결";
+        } else {
+          res.data["sell_confirmed"] = "미체결";
+        }
+        this.stocks_info = res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     console.log(this.stock_code);
     for (var i = 0; i < this.chart["ohlcv"].length; i++) {
       let str = this.chart["ohlcv"][i][0].replaceAll("T15:00:00.000Z", "");
@@ -595,7 +711,23 @@ export default {
         stock_holding_amount: 1241176035,
         stock_holding_ratio: 20.79,
       },
+      user_hold_amount: 12345,
+      order_success: "",
+      stocks_info: {
+        sell_order_time: "2022-12-05 13:00:00",
+        sell_order_amount: 6,
+        sell_order_price: 7,
+        sell_confirmed: "체결",
+
+        buy_order_time: "2022-12-05 17:00:00",
+        buy_order_amount: 4,
+        buy_order_price: 5,
+        buy_confirmed: "미체결",
+      },
       count: 999,
+      trade: "",
+      order_amount: 0,
+      order_price: 0,
       overlays: [
         Overlays["MOM"],
         Overlays["SMA"],
