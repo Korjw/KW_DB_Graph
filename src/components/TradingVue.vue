@@ -23,7 +23,7 @@ export default {
   name: "app",
   components: { TradingVue },
   methods: {
-    onResize(event) {
+    onResize() {
       this.width = window.innerWidth;
       this.height = window.innerHeight;
     },
@@ -82,8 +82,8 @@ export default {
         close_data.push(ohlcv[i][4]);
         count++;
       }
-      for (var i = 0; i < data.length; i++) {
-        //console.log(data[i]);
+      for (var k = 0; k < data.length; k++) {
+        //console.log(data[k]);
       }
       return data;
     },
@@ -108,8 +108,8 @@ export default {
         close_data.push(ohlcv[i][4]);
         count++;
       }
-      for (var i = 0; i < data.length; i++) {
-        //console.log(data[i]);
+      for (var k = 0; k < data.length; k++) {
+        //console.log(data[k]);
       }
       return data;
     },
@@ -128,8 +128,8 @@ export default {
         before_data.push(ohlcv[i][4]);
         count++;
       }
-      for (var i = 0; i < data.length; i++) {
-        //console.log(data[i]);
+      for (var k = 0; k < data.length; k++) {
+        //console.log(data[k]);
       }
       return data;
     },
@@ -162,8 +162,8 @@ export default {
         close_data.push(ohlcv[i][4]);
         count++;
       }
-      for (var i = 0; i < data.length; i++) {
-        //console.log(data[i]);
+      for (var k = 0; k < data.length; k++) {
+        //console.log(data[k]);
       }
       return data;
     },
@@ -200,8 +200,37 @@ export default {
         low_data.push(ohlcv[i][3]);
         count++;
       }
-      for (var i = 0; i < data.length; i++) {
-        //console.log(data[i]);
+      for (var k = 0; k < data.length; k++) {
+        //console.log(data[k]);
+      }
+      return data;
+    },
+    RSI(ohlcv) {
+      //console.log(ohlcv);
+      var data = [];
+      var close_data = [];
+      let count = 0;
+      for (var i = 0; i < ohlcv.length; i++) {
+        if (count == 20) {
+          var AU = 0;
+          var AD = 0;
+          for (var j = 0; j < close_data.length - 1; j++) {
+            const diff = close_data[j + 1] - close_data[j];
+            if (diff > 0) AU += diff;
+            else AD += diff * -1;
+          }
+          const RS = AU / AD;
+          const RSI = RS / (1 + RS);
+          data.push([ohlcv[i][0], RSI * 100]);
+          close_data.shift();
+          close_data.push(ohlcv[i][4]);
+          continue;
+        }
+        close_data.push(ohlcv[i][4]);
+        count++;
+      }
+      for (var k = 0; k < data.length; k++) {
+        //console.log(data[k]);
       }
       return data;
     },
@@ -242,6 +271,7 @@ export default {
         Overlays["EMA"],
         Overlays["BBW"],
         Overlays["MFI"],
+        Overlays["RSI"],
       ],
       chart: {
         ohlcv: [
@@ -304,12 +334,13 @@ export default {
           },
         ],
         offchart: [
-          // {
-          //   name: "Momentum, 10",
-          //   type: "MOM",
-          //   data: [],
-          //   settings: {
-          //     color: "#f7890c",
+          //   {
+          //     name: "Relative Strength Index, 20",
+          //     type: "RSI",
+          //     data: [],
+          //     settings: {
+          //       color: "#f7890c",
+          //     },
           //   },
           {
             name: "Money Flow Index, 14",
