@@ -30,9 +30,38 @@ export default {
     on_button_click(event) {
       //오버레이 조절
       if (event.button === "up") {
-        console.log(event.button);
+        this.count += 1;
       }
-      if (event.button === "down") console.log(event.button);
+      if (event.button === "down") {
+        this.count -= 1;
+      }
+      const types = ["EMA", "MOM", "BBW", "MFI"];
+      const names = [
+        "Exponential Moving Average, 20",
+        "Momentum, 10",
+        "BollingerBandsWidth, 20",
+        "Money Flow Index, 14",
+      ];
+      if (this.count % 4 == 0) {
+        this.chart["offchart"][0]["name"] = names[0];
+        this.chart["offchart"][0]["type"] = types[0];
+        this.chart["offchart"][0]["data"] = this.EMA(this.chart["ohlcv"]);
+      }
+      if (this.count % 4 == 1) {
+        this.chart["offchart"][0]["name"] = names[1];
+        this.chart["offchart"][0]["type"] = types[1];
+        this.chart["offchart"][0]["data"] = this.MOM(this.chart["ohlcv"]);
+      }
+      if (this.count % 4 == 2) {
+        this.chart["offchart"][0]["name"] = names[2];
+        this.chart["offchart"][0]["type"] = types[2];
+        this.chart["offchart"][0]["data"] = this.BBW(this.chart["ohlcv"]);
+      }
+      if (this.count % 4 == 3) {
+        this.chart["offchart"][0]["name"] = names[3];
+        this.chart["offchart"][0]["type"] = types[3];
+        this.chart["offchart"][0]["data"] = this.MFI(this.chart["ohlcv"]);
+      }
     },
     SMA(ohlcv) {
       //console.log(ohlcv);
@@ -84,7 +113,7 @@ export default {
       }
       return data;
     },
-    Momentum(ohlcv) {
+    MOM(ohlcv) {
       var data = [];
       var before_data = [];
       let count = 0;
@@ -104,7 +133,7 @@ export default {
       }
       return data;
     },
-    BollingerBands(ohlcv) {
+    BBW(ohlcv) {
       //console.log(ohlcv);
       var data = [];
       var close_data = [];
@@ -184,7 +213,7 @@ export default {
       //console.log(str);
       this.chart["ohlcv"][i][0] = Math.floor(new Date(str).getTime());
     }
-    this.chart["onchart"][0]["data"] = this.EMA(this.chart["ohlcv"]);
+    this.chart["onchart"][0]["data"] = this.SMA(this.chart["ohlcv"]);
     this.chart["offchart"][0]["data"] = this.MFI(this.chart["ohlcv"]);
     // axios
     //   .post("http://127.0.0.1:8000/:stock", {
@@ -206,6 +235,7 @@ export default {
   },
   data() {
     return {
+      count: 1000,
       overlays: [
         Overlays["MOM"],
         Overlays["SMA"],
@@ -264,7 +294,7 @@ export default {
         onchart: [
           {
             name: "Simple Moving Average, 20",
-            type: "EMA",
+            type: "SMA",
             data: [],
             settings: {
               "z-index": 5,

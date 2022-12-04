@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <CorpInfo />
+    <CorpInfo />n
     <TradingVue />
   </div>
 </template>
