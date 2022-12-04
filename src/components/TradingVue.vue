@@ -22,49 +22,85 @@
       <div class="flex gap-10 justify-between">
         <div id="chart">
           <trading-vue
+            :titleTxt="this.corp['cop_name']"
             :data="this.chart"
             :width="1200"
             :height="500"
             :color-back="colors.colorBack"
             :color-grid="colors.colorGrid"
             :color-text="colors.colorText"
-            :legend-buttons="['up', 'down']"
-            v-on:legend-button-click="on_button_click"
             :overlays="overlays"
           >
           </trading-vue>
 
-          <div id="information">
-            <dl
-              class="max-w-md text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700"
-            >
-              <div class="flex flex-col pb-1">
-                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
-                  {{ corp["cop_name"] }} 총 주식량
-                </dt>
-                <dd class="text-lg font-semibold">
-                  {{ corp["stock_amount"] }}
-                </dd>
+          <div class="flex flex-col-reverse gap-10">
+            <div class="flex gap-10 justify-between">
+              <div id="information">
+                <dl
+                  class="max-w-md text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700"
+                >
+                  <div class="flex flex-col pb-1">
+                    <dt
+                      class="mb-1 text-gray-500 md:text-lg dark:text-gray-400"
+                    >
+                      {{ corp["cop_name"] }} 총 주식량
+                    </dt>
+                    <dd class="text-lg font-semibold">
+                      {{ corp["stock_amount"] }}
+                    </dd>
+                  </div>
+                  <div class="flex flex-col py-1">
+                    <dt
+                      class="mb-1 text-gray-500 md:text-lg dark:text-gray-400"
+                    >
+                      {{ corp["cop_name"] }} 주식 보유자
+                    </dt>
+                    <dd class="text-lg font-semibold">
+                      {{ corp["stockholder_name"] }}
+                    </dd>
+                  </div>
+                  <div class="flex flex-col pt-1">
+                    <dt
+                      class="mb-1 text-gray-500 md:text-lg dark:text-gray-400"
+                    >
+                      {{ corp["stockholder_name"].split(" ")[0] }}의 보유 주식량
+                      및 비율
+                    </dt>
+                    <dd class="text-lg font-semibold">
+                      {{ corp["stock_holding_amount"] }}
+                      ({{ corp["stock_holding_ratio"] }}%)
+                    </dd>
+                  </div>
+                </dl>
               </div>
-              <div class="flex flex-col py-1">
-                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
-                  {{ corp["cop_name"] }} 주식 보유자
-                </dt>
-                <dd class="text-lg font-semibold">
-                  {{ corp["stockholder_name"] }}
-                </dd>
+              <!-- sidebar -->
+              <div class="gap-5 min-w-[50rem] max-h-[42rem]">
+                <div
+                  class="w-full p-4 bg-white border rounded-lg shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <dl
+                    class="max-w-md text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700"
+                  >
+                    <div class="flex flex-col">
+                      <dt
+                        class="mb-1 text-gray-500 md:text-lg dark:text-gray-400"
+                      >
+                        멀채울까요
+                      </dt>
+                      <dd class="text-lg font-semibold">멀채울까요</dd>
+                    </div>
+                    <div class="flex flex-col">
+                      <dt
+                        class="mb-1 text-gray-500 md:text-lg dark:text-gray-400"
+                      >
+                        멀채울까요
+                      </dt>
+                      <dd class="text-lg font-semibold">멀채울까요</dd>
+                    </div>
+                  </dl>
+                </div>
               </div>
-              <div class="flex flex-col pt-1">
-                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
-                  {{ corp["stockholder_name"].split(" ")[0] }}의 보유 주식량 및
-                  비율
-                </dt>
-                <dd class="text-lg font-semibold">
-                  {{ corp["stock_holding_amount"] }}
-                  ({{ corp["stock_holding_ratio"] }}%)
-                </dd>
-              </div>
-            </dl>
+            </div>
           </div>
         </div>
 
@@ -85,7 +121,7 @@
                   금액
                 </p>
               </div>
-              <div class="my-6">
+              <div class="my-3">
                 <label
                   for="category"
                   class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-400"
@@ -101,7 +137,7 @@
                   <option value="sell">매수</option>
                 </select>
               </div>
-              <div class="my-6">
+              <div class="my-3">
                 <label
                   for="stock_orders"
                   class="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
@@ -115,7 +151,18 @@
                   required
                 />
               </div>
-              <div class="flex flex-col my-6">
+              <div class="my-3">
+                <label
+                  for="availability"
+                  class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-400"
+                >
+                  총 주문 금액
+                </label>
+                <p class="font-normal text-xl text-gray-700 dark:text-gray-400">
+                  금액
+                </p>
+              </div>
+              <div class="flex flex-col">
                 <button
                   type="submit"
                   class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -135,13 +182,21 @@
               >
                 거래 지표?
               </h5>
+              <div class="flex flex-col">
+                <button
+                  v-on:click="button_click"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  offchart 변경
+                </button>
+              </div>
             </div>
             <div class="flow-root">
               <ul
                 role="list"
                 class="divide-y divide-gray-200 dark:divide-gray-700"
               >
-                <li class="py-3 sm:py-4">
+                <li class="py-3 sm:py-2">
                   <div class="flex items-center space-x-4">
                     <div class="flex-1 min-w-0">
                       <p
@@ -159,7 +214,7 @@
                     </div>
                   </div>
                 </li>
-                <li class="py-3 sm:py-4">
+                <li class="py-3 sm:py-2">
                   <div class="flex items-center space-x-4">
                     <div class="flex-1 min-w-0">
                       <p
@@ -177,7 +232,7 @@
                     </div>
                   </div>
                 </li>
-                <li class="py-3 sm:py-4">
+                <li class="py-3 sm:py-2">
                   <div class="flex items-center space-x-4">
                     <div class="flex-1 min-w-0">
                       <p
@@ -195,7 +250,7 @@
                     </div>
                   </div>
                 </li>
-                <li class="py-3 sm:py-4">
+                <li class="py-3 sm:py-2">
                   <div class="flex items-center space-x-4">
                     <div class="flex-1 min-w-0">
                       <p
@@ -231,53 +286,37 @@ export default {
   name: "app",
   components: { TradingVue },
   methods: {
-    on_button_click(event) {
-      if (event.button === "up") {
-        this.count += 1;
-      }
-      if (event.button === "down") {
-        this.count -= 1;
-      }
-      const types = ["EMA", "MOM", "BBW", "MFI", "RSI", "SMA"];
+    button_click() {
+      this.count += 1;
+      const types = ["RSI", "MOM", "BBW", "MFI"];
       const names = [
-        "Exponential Moving Average, 20",
+        "Relative Strength Index, 20",
         "Momentum, 10",
         "Bollinger Bands Width, 20",
         "Money Flow Index, 14",
-        "Relative Strength Index, 20",
-        "Simple Moving Average, 20",
       ];
-      if (this.count % 6 == 0) {
-        this.chart["offchart"][0]["name"] = names[0];
-        this.chart["offchart"][0]["type"] = types[0];
-        this.chart["offchart"][0]["data"] = this.EMA(this.chart["ohlcv"]);
-      }
-      if (this.count % 6 == 1) {
+      if (this.count % 4 == 1) {
         this.chart["offchart"][0]["name"] = names[1];
         this.chart["offchart"][0]["type"] = types[1];
         this.chart["offchart"][0]["data"] = this.MOM(this.chart["ohlcv"]);
       }
-      if (this.count % 6 == 2) {
+      if (this.count % 4 == 2) {
         this.chart["offchart"][0]["name"] = names[2];
         this.chart["offchart"][0]["type"] = types[2];
         this.chart["offchart"][0]["data"] = this.BBW(this.chart["ohlcv"]);
       }
-      if (this.count % 6 == 3) {
+      if (this.count % 4 == 3) {
         this.chart["offchart"][0]["name"] = names[3];
         this.chart["offchart"][0]["type"] = types[3];
         this.chart["offchart"][0]["data"] = this.MFI(this.chart["ohlcv"]);
       }
-      if (this.count % 6 == 4) {
-        this.chart["offchart"][0]["name"] = names[4];
-        this.chart["offchart"][0]["type"] = types[4];
+      if (this.count % 4 == 0) {
+        this.chart["offchart"][0]["name"] = names[0];
+        this.chart["offchart"][0]["type"] = types[0];
         this.chart["offchart"][0]["data"] = this.RSI(this.chart["ohlcv"]);
       }
-      if (this.count % 6 == 5) {
-        this.chart["offchart"][0]["name"] = names[5];
-        this.chart["offchart"][0]["type"] = types[5];
-        this.chart["offchart"][0]["data"] = this.SMA(this.chart["ohlcv"]);
-      }
     },
+    //MFI,BBW,MOM,RSI
     SMA(ohlcv) {
       //console.log(ohlcv);
       var data = [];
@@ -493,6 +532,7 @@ export default {
     axios
       .post("http://127.0.0.1:3000/api/stock/info/", {
         stock_code: this.stock_code,
+        group_name: "default",
       })
       .then((res) => {
         console.log(res.data);
@@ -504,6 +544,7 @@ export default {
     axios
       .post("http://127.0.0.1:3000/api/stock/price/", {
         stock_code: this.stock_code,
+        group_name: "default",
       })
       .then((res) => {
         console.log(res.data);
@@ -530,6 +571,8 @@ export default {
       this.chart["ohlcv"][i][0] = Math.floor(new Date(str).getTime());
     }
     this.chart["onchart"][0]["data"] = this.BB(this.chart["ohlcv"]);
+    this.chart["onchart"][1]["data"] = this.SMA(this.chart["ohlcv"]);
+    this.chart["onchart"][2]["data"] = this.EMA(this.chart["ohlcv"]);
     this.chart["offchart"][0]["data"] = this.MFI(this.chart["ohlcv"]);
   },
   mounted() {
@@ -812,38 +855,34 @@ export default {
             type: "BB",
             data: [],
             settings: {
-              "z-index": 5,
-              legend: false,
               color: "#2cc6c9ab",
               backColor: "#2cc6c90a",
             },
           },
-          // {
-          //   name: "Simple Moving Average, 20",
-          //   type: "SMA",
-          //   data: [],
-          //   settings: {
-          //     "z-index": 5,
-          //     legend: false,
-          //     color: "#f7890c",
-          //   },
-          // },
+          {
+            name: "Simple Moving Average, 20",
+            type: "SMA",
+            data: [],
+            settings: {
+              color: "#0000cc",
+            },
+          },
+          {
+            name: "Exponential Moving Average, 20",
+            type: "EMA",
+            data: [],
+            settings: {
+              color: "#ff0000",
+            },
+          },
         ],
         offchart: [
-          //   {
-          //     name: "Relative Strength Index, 20",
-          //     type: "RSI",
-          //     data: [],
-          //     settings: {
-          //       color: "#f7890c",
-          //     },
-          //   },
           {
             name: "Money Flow Index, 14",
             type: "MFI",
             data: [],
             settings: {
-              color: "#2cc6c9ab",
+              color: "#ff0000",
               backColor: "#2cc6c90a",
             },
           },
