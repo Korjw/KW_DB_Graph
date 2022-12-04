@@ -1,28 +1,30 @@
 <template>
-  <div class="gap-10 max-w-[64rem] sticky top-0">
+  <div class="gap-10 max-w-[100rem] sticky top-0">
     <div id="card">
       <a
         href="#"
-        class="block p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+        class="block p-6b g-white border border-gray-200 rounded-lg shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
       >
         <h5
-          class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+          class="mb-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-white"
         >
           {{ corp["cop_name"] }} ({{ corp["market"] }})
         </h5>
-        <p class="font-normal text-gray-700 dark:text-gray-400">
+        <p class="font-normal text-2xl text-gray-700 dark:text-gray-400">
           {{ corp["cop_info"] }}
         </p>
       </a>
     </div>
 
-    <div class="flex flex-col-reverse md:flex-row gap-10">
+    <div class="flex flex-col-reverse gap-10">
       <!-- NOTE: list view -->
 
       <div class="flex gap-10 justify-between">
         <div id="chart">
           <trading-vue
             :data="this.chart"
+            :width="1200"
+            :height="500"
             :color-back="colors.colorBack"
             :color-grid="colors.colorGrid"
             :color-text="colors.colorText"
@@ -31,47 +33,191 @@
             :overlays="overlays"
           >
           </trading-vue>
+
+          <div id="information">
+            <dl
+              class="max-w-md text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700"
+            >
+              <div class="flex flex-col pb-1">
+                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
+                  {{ corp["cop_name"] }} 총 주식량
+                </dt>
+                <dd class="text-lg font-semibold">
+                  {{ corp["stock_amount"] }}
+                </dd>
+              </div>
+              <div class="flex flex-col py-1">
+                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
+                  {{ corp["cop_name"] }} 주식 보유자
+                </dt>
+                <dd class="text-lg font-semibold">
+                  {{ corp["stockholder_name"] }}
+                </dd>
+              </div>
+              <div class="flex flex-col pt-1">
+                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
+                  {{ corp["stockholder_name"].split(" ")[0] }}의 보유 주식량 및
+                  비율
+                </dt>
+                <dd class="text-lg font-semibold">
+                  {{ corp["stock_holding_amount"] }}
+                  ({{ corp["stock_holding_ratio"] }}%)
+                </dd>
+              </div>
+            </dl>
+          </div>
         </div>
 
         <!-- sidebar -->
-        <div class="flex flex-col gap-5 min-w-[40rem] max-h-[42rem]">
-          주식거래 창 사고팔기
+        <div class="gap-5 min-w-[20rem] max-h-[42rem]">
+          <div
+            class="w-full p-4 bg-white border rounded-lg shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700"
+          >
+            <form>
+              <div>
+                <label
+                  for="availability"
+                  class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-400"
+                >
+                  주문가능
+                </label>
+                <p class="font-normal text-xl text-gray-700 dark:text-gray-400">
+                  금액
+                </p>
+              </div>
+              <div class="my-6">
+                <label
+                  for="category"
+                  class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-400"
+                >
+                  매수/매도
+                </label>
+                <select
+                  id="category"
+                  v-model="category"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option value="buy">매도</option>
+                  <option value="sell">매수</option>
+                </select>
+              </div>
+              <div class="my-6">
+                <label
+                  for="stock_orders"
+                  class="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
+                  >수량(1 단위)</label
+                >
+                <input
+                  type="number"
+                  id="stock_orders"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="0"
+                  required
+                />
+              </div>
+              <div class="flex flex-col my-6">
+                <button
+                  type="submit"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  주문
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div
+            class="w-full max-w-md p-4 bg-white border rounded-lg shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700"
+          >
+            <div class="flex items-center justify-between mb-4">
+              <h5
+                class="text-xl font-bold leading-none text-gray-900 dark:text-white"
+              >
+                거래 지표?
+              </h5>
+            </div>
+            <div class="flow-root">
+              <ul
+                role="list"
+                class="divide-y divide-gray-200 dark:divide-gray-700"
+              >
+                <li class="py-3 sm:py-4">
+                  <div class="flex items-center space-x-4">
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-medium text-gray-900 truncate dark:text-white"
+                      >
+                        전일 거래량(24H)
+                      </p>
+                    </div>
+                    <div
+                      class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
+                    >
+                      {{
+                        this.chart["ohlcv"][this.chart["ohlcv"].length - 1][5]
+                      }}
+                    </div>
+                  </div>
+                </li>
+                <li class="py-3 sm:py-4">
+                  <div class="flex items-center space-x-4">
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-medium text-gray-900 truncate dark:text-white"
+                      >
+                        고가(당일)
+                      </p>
+                    </div>
+                    <div
+                      class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
+                    >
+                      {{
+                        this.chart["ohlcv"][this.chart["ohlcv"].length - 1][2]
+                      }}
+                    </div>
+                  </div>
+                </li>
+                <li class="py-3 sm:py-4">
+                  <div class="flex items-center space-x-4">
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-medium text-gray-900 truncate dark:text-white"
+                      >
+                        저가(당일)
+                      </p>
+                    </div>
+                    <div
+                      class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
+                    >
+                      {{
+                        this.chart["ohlcv"][this.chart["ohlcv"].length - 1][3]
+                      }}
+                    </div>
+                  </div>
+                </li>
+                <li class="py-3 sm:py-4">
+                  <div class="flex items-center space-x-4">
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-medium text-gray-900 truncate dark:text-white"
+                      >
+                        전일종가
+                      </p>
+                    </div>
+                    <div
+                      class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
+                    >
+                      {{
+                        this.chart["ohlcv"][this.chart["ohlcv"].length - 2][4]
+                      }}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div id="information">
-      <footer
-        class="p-4 bg-white rounded-lg shadow md:px-6 md:py-8 dark:bg-gray-900"
-      >
-        <div class="sm:flex sm:items-center sm:justify-between">
-          <span
-            class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-            >{{ corp["cop_name"] }} 총 주식량 : {{ corp["stock_amount"] }}</span
-          >
-        </div>
-        <div class="sm:flex sm:items-center sm:justify-between">
-          <span
-            class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-            >{{ corp["cop_name"] }} 주식 보유자 :
-            {{ corp["stockholder_name"] }}</span
-          >
-        </div>
-        <div class="sm:flex sm:items-center sm:justify-between">
-          <span
-            class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-            >{{ corp["cop_name"] }} 보유 주식량 :
-            {{ corp["stock_holding_amount"] }}</span
-          >
-        </div>
-        <div class="sm:flex sm:items-center sm:justify-between">
-          <span
-            class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-            >{{ corp["cop_name"] }} 보유 주식 비율 :
-            {{ corp["stock_holding_ratio"] }}</span
-          >
-        </div>
-      </footer>
     </div>
   </div>
 </template>
@@ -406,7 +552,7 @@ export default {
         stock_holding_amount: 1241176035,
         stock_holding_ratio: 20.79,
       },
-      count: 1000,
+      count: 999,
       overlays: [
         Overlays["MOM"],
         Overlays["SMA"],
