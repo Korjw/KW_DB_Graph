@@ -1,14 +1,15 @@
 import Vue from "vue";
 import App from "./App.vue";
-import VueApexCharts from "vue-apexcharts";
-import "./index.css";
-import "flowbite";
+import "./tailwind.css";
+
+import router from "./router";
+import VueRouter from "vue-router";
+
+Vue.use(VueRouter);
 
 Vue.config.productionTip = false;
 
-Vue.use(VueApexCharts);
-Vue.component("apex_chart", VueApexCharts);
-
 new Vue({
+  router: router,
   render: (h) => h(App),
 }).$mount("#app");
