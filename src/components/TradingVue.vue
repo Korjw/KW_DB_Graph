@@ -91,7 +91,7 @@
                         주문 시간 : {{ stocks_info.buy_order_time }} 주문량 :
                         {{ stocks_info.buy_order_amount }} 주문 금액 :
                         {{ stocks_info.buy_order_price }}
-                        {{ stocks_info.buy_unconfirmed_amount }}
+                        {{ stocks_info.buy_confirmed }}
                       </dd>
                     </div>
                     <div class="flex flex-col">
@@ -102,7 +102,7 @@
                         주문 시간 : {{ stocks_info.sell_order_time }} 주문량 :
                         {{ stocks_info.sell_order_amount }} 주문 금액 :
                         {{ stocks_info.sell_order_price }}
-                        {{ stocks_info.sell_unconfirmed_amount }}
+                        {{ stocks_info.sell_confirmed }}
                       </dd>
                     </div>
                   </dl>
@@ -347,17 +347,28 @@ export default {
             res.data["sell_order_time"].replaceAll("Z", "");
             res.data["buy_order_time"].replaceAll("T", " ");
             res.data["buy_order_time"].replaceAll("Z", "");
-            if (res.data["buy_unconfirmed_amount"] == 1) {
-              res.data["buy_unconfirmed_amount"] = "체결";
+            if (res.data["buy_unconfirmed_amount"] > 0) {
+              this.stocks_info["buy_confirmed"] = "미체결";
+              this.stocks_info["buy_order_amount"] =
+                res.data["buy_unconfirmed_amount"];
             } else {
-              res.data["buy_unconfirmed_amount"] = "미체결";
+              this.stocks_info["buy_confirmed"] = "체결";
+              this.stocks_info["buy_order_amount"] =
+                res.data["buy_order_amount"];
             }
-            if (res.data["sell_unconfirmed_amount"] == 1) {
-              res.data["sell_unconfirmed_amount"] = "체결";
+            if (res.data["sell_unconfirmed_amount"] > 0) {
+              this.stocks_info["sell_confirmed"] = "미체결";
+              this.stocks_info["sell_order_amount"] =
+                res.data["sell_unconfirmed_amount"];
             } else {
-              res.data["sell_unconfirmed_amount"] = "미체결";
+              this.stocks_info["sell_confirmed"] = "체결";
+              this.stocks_info["sell_order_amount"] =
+                res.data["sell_order_amount"];
             }
-            this.stocks_info = res.data;
+            this.stocks_info["sell_order_time"] = res.data["sell_order_time"];
+            this.stocks_info["sell_order_price"] = res.data["sell_order_price"];
+            this.stocks_info["buy_order_time"] = res.data["buy_order_time"];
+            this.stocks_info["buy_order_price"] = res.data["buy_order_price"];
           })
           .catch((err) => {
             console.log(err);
@@ -661,17 +672,26 @@ export default {
         res.data["sell_order_time"].replaceAll("Z", "");
         res.data["buy_order_time"].replaceAll("T", " ");
         res.data["buy_order_time"].replaceAll("Z", "");
-        if (res.data["buy_unconfirmed_amount"] == 1) {
-          res.data["buy_unconfirmed_amount"] = "체결";
+        if (res.data["buy_unconfirmed_amount"] > 0) {
+          this.stocks_info["buy_confirmed"] = "미체결";
+          this.stocks_info["buy_order_amount"] =
+            res.data["buy_unconfirmed_amount"];
         } else {
-          res.data["buy_unconfirmed_amount"] = "미체결";
+          this.stocks_info["buy_confirmed"] = "체결";
+          this.stocks_info["buy_order_amount"] = res.data["buy_order_amount"];
         }
-        if (res.data["sell_unconfirmed_amount"] == 1) {
-          res.data["sell_unconfirmed_amount"] = "체결";
+        if (res.data["sell_unconfirmed_amount"] > 0) {
+          this.stocks_info["sell_confirmed"] = "미체결";
+          this.stocks_info["sell_order_amount"] =
+            res.data["sell_unconfirmed_amount"];
         } else {
-          res.data["sell_unconfirmed_amount"] = "미체결";
+          this.stocks_info["sell_confirmed"] = "체결";
+          this.stocks_info["sell_order_amount"] = res.data["sell_order_amount"];
         }
-        this.stocks_info = res.data;
+        this.stocks_info["sell_order_time"] = res.data["sell_order_time"];
+        this.stocks_info["sell_order_price"] = res.data["sell_order_price"];
+        this.stocks_info["buy_order_time"] = res.data["buy_order_time"];
+        this.stocks_info["buy_order_price"] = res.data["buy_order_price"];
       })
       .catch((err) => {
         console.log(err);
@@ -715,12 +735,12 @@ export default {
         sell_order_time: "2022-12-05 13:00:00",
         sell_order_amount: 6,
         sell_order_price: 7,
-        sell_unconfirmed_amount: "체결",
+        sell_confirmed: "체결",
 
         buy_order_time: "2022-12-05 17:00:00",
         buy_order_amount: 4,
         buy_order_price: 5,
-        buy_unconfirmed_amount: "미체결",
+        buy_confirmed: "미체결",
       },
       count: 999,
       trade: "",
