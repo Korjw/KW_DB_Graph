@@ -183,13 +183,22 @@
                   주문
                 </button>
               </div>
-              <div class="flex flex-col">
-                <div class="my-3">
-                  <label
-                    for="order_price "
-                    class="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
-                    >{{ order_success }}</label
-                  >
+              <div
+                v-show="isOpen"
+                class="absolute inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50"
+              >
+                <div class="max-w-2xl p-6 bg-white rounded-md shadow-xl">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-2xl">{{ order_success }}</h3>
+                  </div>
+                  <div class="mt-4">
+                    <button
+                      @click="isOpen = false"
+                      class="px-6 py-2 items-center text-blue-800 border border-blue-600 rounded"
+                    >
+                      확인
+                    </button>
+                  </div>
                 </div>
               </div>
             </form>
@@ -211,6 +220,24 @@
                 >
                   offchart 변경
                 </button>
+                <div
+                  v-show="isOpen"
+                  class="absolute inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50"
+                >
+                  <div class="max-w-2xl p-6 bg-white rounded-md shadow-xl">
+                    <div class="flex items-center justify-between">
+                      <h3 class="text-2xl">{{ order_success }}</h3>
+                    </div>
+                    <div class="mt-4">
+                      <button
+                        @click="isOpen = false"
+                        class="px-6 py-2 items-center text-blue-800 border border-blue-600 rounded"
+                      >
+                        확인
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="flow-root">
@@ -309,62 +336,70 @@ export default {
   components: { TradingVue },
   methods: {
     order() {
+      this.isOpen = true;
       //console(this.trade, this.stock_code, this.order_amount, this.order_price);
-      if (this.order_amount * this.order_price > this.user_hold_amount) {
-        this.order_success = "주문실패";
-      } else {
-        this.order_success = "주문성공";
-        axios
-          .post("http://127.0.0.1:3000/api/stock/order/", {
-            trade: this.trade,
-            stock_code: this.stock_code,
-            order_amount: this.order_amount,
-            order_price: this.order_price,
-          })
-          .then((res) => {
-            console.log(res.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        axios
-          .get("http://127.0.0.1:3000/api/user/money/", {})
-          .then((res) => {
-            console.log(res.data);
-            this.user_hold_amount = res.data["money"];
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+      axios
+        .post("http://127.0.0.1:3000/api/stock/order/", {
+          trade: this.trade,
+          stock_code: this.stock_code,
+          order_amount: this.order_amount,
+          order_price: this.order_price,
+        })
+        .then((res) => {
+          console.log(res.data);
+          this.order_success = res.data; //추가해주세요 주문 성공 여부;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      axios
+        .get("http://127.0.0.1:3000/api/user/money/", {})
+        .then((res) => {
+          console.log(res.data);
+          this.user_hold_amount = res.data["money"];
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-        axios
-          .post("http://127.0.0.1:3000/api/trade/confirm/", {
-            stock_code: this.stock_code,
-          })
-          .then((res) => {
-            console.log(res.data);
-            res.data["sell_order_time"].replaceAll("T", " ");
-            res.data["sell_order_time"].replaceAll("Z", "");
-            res.data["buy_order_time"].replaceAll("T", " ");
-            res.data["buy_order_time"].replaceAll("Z", "");
-            if (res.data["buy_confirmed"] == 1) {
-              res.data["buy_confirmed"] = "체결";
-            } else {
-              res.data["buy_confirmed"] = "미체결";
-            }
-            if (res.data["sell_confirmed"] == 1) {
-              res.data["sell_confirmed"] = "체결";
-            } else {
-              res.data["sell_confirmed"] = "미체결";
-            }
-            this.stocks_info = res.data;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+      axios
+        .post("http://127.0.0.1:3000/api/trade/confirm/", {
+          stock_code: this.stock_code,
+        })
+        .then((res) => {
+          console.log(res.data);
+          res.data["sell_order_time"].replaceAll("T", " ");
+          res.data["sell_order_time"].replaceAll("Z", "");
+          res.data["buy_order_time"].replaceAll("T", " ");
+          res.data["buy_order_time"].replaceAll("Z", "");
+          if (res.data["buy_unconfirmed_amount"] > 0) {
+            this.stocks_info["buy_confirmed"] = "미체결";
+            this.stocks_info["buy_order_amount"] =
+              res.data["buy_unconfirmed_amount"];
+          } else {
+            this.stocks_info["buy_confirmed"] = "체결";
+            this.stocks_info["buy_order_amount"] = res.data["buy_order_amount"];
+          }
+          if (res.data["sell_unconfirmed_amount"] > 0) {
+            this.stocks_info["sell_confirmed"] = "미체결";
+            this.stocks_info["sell_order_amount"] =
+              res.data["sell_unconfirmed_amount"];
+          } else {
+            this.stocks_info["sell_confirmed"] = "체결";
+            this.stocks_info["sell_order_amount"] =
+              res.data["sell_order_amount"];
+          }
+          this.stocks_info["sell_order_time"] = res.data["sell_order_time"];
+          this.stocks_info["sell_order_price"] = res.data["sell_order_price"];
+          this.stocks_info["buy_order_time"] = res.data["buy_order_time"];
+          this.stocks_info["buy_order_price"] = res.data["buy_order_price"];
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     button_click() {
+      this.isOpen = true;
       this.count += 1;
       const types = ["RSI", "MOM", "BBW", "MFI"];
       const names = [
@@ -661,17 +696,26 @@ export default {
         res.data["sell_order_time"].replaceAll("Z", "");
         res.data["buy_order_time"].replaceAll("T", " ");
         res.data["buy_order_time"].replaceAll("Z", "");
-        if (res.data["buy_confirmed"] == 1) {
-          res.data["buy_confirmed"] = "체결";
+        if (res.data["buy_unconfirmed_amount"] > 0) {
+          this.stocks_info["buy_confirmed"] = "미체결";
+          this.stocks_info["buy_order_amount"] =
+            res.data["buy_unconfirmed_amount"];
         } else {
-          res.data["buy_confirmed"] = "미체결";
+          this.stocks_info["buy_confirmed"] = "체결";
+          this.stocks_info["buy_order_amount"] = res.data["buy_order_amount"];
         }
-        if (res.data["sell_confirmed"] == 1) {
-          res.data["sell_confirmed"] = "체결";
+        if (res.data["sell_unconfirmed_amount"] > 0) {
+          this.stocks_info["sell_confirmed"] = "미체결";
+          this.stocks_info["sell_order_amount"] =
+            res.data["sell_unconfirmed_amount"];
         } else {
-          res.data["sell_confirmed"] = "미체결";
+          this.stocks_info["sell_confirmed"] = "체결";
+          this.stocks_info["sell_order_amount"] = res.data["sell_order_amount"];
         }
-        this.stocks_info = res.data;
+        this.stocks_info["sell_order_time"] = res.data["sell_order_time"];
+        this.stocks_info["sell_order_price"] = res.data["sell_order_price"];
+        this.stocks_info["buy_order_time"] = res.data["buy_order_time"];
+        this.stocks_info["buy_order_price"] = res.data["buy_order_price"];
       })
       .catch((err) => {
         console.log(err);
@@ -697,6 +741,7 @@ export default {
   },
   data() {
     return {
+      isOpen: false,
       stock_code: window.location.href.split("/")[5],
       corp: {
         stock_code: "005930",
@@ -710,7 +755,7 @@ export default {
         stock_holding_ratio: 20.79,
       },
       user_hold_amount: 12345,
-      order_success: "",
+      order_success: "주문 성공",
       stocks_info: {
         sell_order_time: "2022-12-05 13:00:00",
         sell_order_amount: 6,
