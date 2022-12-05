@@ -610,7 +610,6 @@ export default {
     axios
       .post("http://127.0.0.1:3000/api/stock/info/", {
         stock_code: this.stock_code,
-        group_name: "default",
       })
       .then((res) => {
         console.log(res.data);
@@ -623,19 +622,18 @@ export default {
     axios
       .post("http://127.0.0.1:3000/api/stock/price/", {
         stock_code: this.stock_code,
-        group_name: "default",
       })
       .then((res) => {
         console.log(res.data);
         for (var i = 0; i < res.data.length; i++) {
           this.chart["ohlcv"] = [];
           this.chart["ohlcv"].push([
-            res.data["price_date"],
-            res.data["open_price"],
-            res.data["max_price"],
-            res.data["min_price"],
-            res.data["close_price"],
-            res.data["volume"],
+            res.data[i]["price_date"],
+            res.data[i]["open_price"],
+            res.data[i]["max_price"],
+            res.data[i]["min_price"],
+            res.data[i]["close_price"],
+            res.data[i]["volume"],
           ]);
         }
       })
