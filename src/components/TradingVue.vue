@@ -336,7 +336,6 @@ export default {
   components: { TradingVue },
   methods: {
     order() {
-      this.isOpen = true;
       //console(this.trade, this.stock_code, this.order_amount, this.order_price);
       axios
         .post("http://127.0.0.1:3000/api/stock/order/", {
@@ -397,6 +396,8 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+
+      this.isOpen = true;
     },
     button_click() {
       this.isOpen = true;
@@ -919,22 +920,6 @@ export default {
             487.14701364,
           ],
           [
-            "2022-12-02T15:00:00.000Z",
-            4014.6,
-            4041.7,
-            4005.6,
-            4031.8,
-            505.30648465,
-          ],
-          [
-            "2022-12-03T15:00:00.000Z",
-            4032,
-            4032,
-            3986.1,
-            4008.8,
-            792.52103654,
-          ],
-          [
             "2022-12-04T15:00:00.000Z",
             4008.8,
             4017.1,
@@ -997,22 +982,6 @@ export default {
             4199.9,
             4216.6,
             1197.42649634,
-          ],
-          [
-            "2022-12-12T15:00:00.000Z",
-            4216.7,
-            4260.7,
-            4208.5,
-            4216.1,
-            1067.10928935,
-          ],
-          [
-            "2022-12-13T15:00:00.000Z",
-            4214.9,
-            4257.6,
-            4205,
-            4247.3,
-            970.81717333,
           ],
           [
             "2022-12-14T15:00:00.000Z",

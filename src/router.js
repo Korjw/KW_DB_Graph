@@ -6,6 +6,10 @@ const route = [
     path: "/stock/price/:stock_code",
     component: () => import("@/components/TradingVue.vue"),
   },
+  {
+    path: "/admin",
+    component: () => import("@/components/AdminPage.vue"),
+  },
 ];
 
 const router = new VueRouter({
